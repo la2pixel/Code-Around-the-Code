@@ -4,7 +4,7 @@ A tutorial by Lalitha Sivakumar (https://la2pixel.github.io)
 ---
 ### Who This Is For
 
-You can code — write scripts, build models, analyze data — but the surrounding infrastructure often feels like a black box. Whether you're a grad student, early-career data scientist, or research engineer, this guide will help you confidently run, manage, and collaborate on code in real-world setups :)
+People who can code, write scripts, build models, analyze data but feel that the surrounding infrastructure often feels like a black box. Whether you're a grad student, early-career data scientist, or research engineer, this guide will help you confidently run, manage, and collaborate on code in real-world setups :)
 
 ---
 
