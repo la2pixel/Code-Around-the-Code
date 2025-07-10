@@ -1,10 +1,9 @@
 # Code Around the Code
 
-## Some background about me
-When I started my Master’s in Data Science (after doing a Bachelor’s in Economics), I realized that even though I could write code, I had no idea how any of it actually *worked* internally. I had inner echoes with a lot of disconnected questions (What’s a shell? Why do things break when I move code to another machine? What are `conda` `git` etc. really?)
-Most programming tutorials teach you how to write code. This one focuses on everything around the code — installing software, managing environments, using the terminal, versioning with Git, and running things on remote machines.  It's what I wish I had when I started, and I aim to close the gap.
+### Background
+When I started my Master’s in Data Science (after doing a Bachelor’s in Economics), I realized that even though I could write code, I had no idea how any of it actually *worked* internally. Most programming tutorials teach you how to write code. It turned out I wasn’t alone in this. Many data science environment setup tutorials—like the one on DataCamp—focus on installation steps (Python, R, Git, Shell) but don’t explain *why* each tool is essential :contentReference[oaicite:1]{index=1}. Similarly, guides on Git for data scientists cover commands, but often skip the system-level understanding and mental models behind them :contentReference[oaicite:2]{index=2}. This one focuses on everything around the code — installing software, managing environments, using the terminal, versioning with Git, and running things on remote machines.  It's what I wish I had when I started, and I aim to close the gap.
 
-## Who This Is For
+### Who This Is For
 
 You already know how to write code, run scripts or jupyter notebook for data analysis/modelling.
 But you still struggle with things like:
@@ -16,93 +15,91 @@ But you still struggle with things like:
 - Understaning 'clean' and 'production level' code.
 ---
 
-## How This Guide Works
-
-- Each section starts with a situation.  
-  Example: “You join a research lab and are told to SSH into a server. You’ve never done that before.”
-
-- You’ll see real commands, not toy examples — with enough explanation to understand how and why they work.
-
-- At the end of every page, you’ll know what you can now do that you couldn’t before.
-
-No fluff, no jargon. Just a clear path through the ecosystem.
-
+### Part I: Shell and Terminal  
+You’re told to “run this command” — but what *is* a shell, and what happens when you hit enter?  
+We cover:
+- What a shell is and how it interprets commands
+- Moving around your file system (`pwd`, `cd`, `ls`)
+- Redirecting output, chaining commands, and using pipes
+- Filtering large logs or data with `grep`, `awk`, `sed`
 
 ---
 
-## Structure
+### Part II: Packages, Modules, and Environments  
+You installed a package. Why can’t Python find it? Why do things break when you change machines?  
+We unpack:
+- The difference between system packages, language modules, and environments
+- Tools like `apt`, `pip`, `conda`, and when to use which
+- Creating isolated environments for reproducibility
 
-Part I: Shell and Terminal
-- What is a shell, and what happens when you type a command?
-- Navigating files and folders (`pwd`, `cd`, `ls`)
-- Redirection, piping, and working with output
-- Text filtering with `grep`, `awk`, `sed`, etc.
+---
 
-Part II: Packages, Modules, and Environments
-- What is a “package” and what is a “module”?
-- Package managers: `apt`, `pip`, `conda`, etc.
-- Virtual environments and reproducibility
+### Part III: Git and GitHub  
+You cloned a repo, but now you’re told to make a branch, commit, and open a pull request.  
+Here we explain:
+- How Git tracks changes (not line-by-line diffs, but snapshots)
+- What branching actually means, and why it’s powerful
+- Collaborating through remotes, forks, and PRs
 
-Part III: Git and GitHub
-- What Git actually tracks: snapshots, not diffs
-- Branching and merging: modeling parallel work
-- Pull requests, remotes, and collaboration
+---
 
-Part IV: Working with Remote Machines
-- SSH and the public-key model
-- Secure file transfer (`scp`, `rsync`)
-- Remote dev via VSCode, `tmux`, or `screen`
+### Part IV: Working with Remote Machines  
+You join a team and are asked to SSH into a compute server. You're lost.  
+This part covers:
+- How SSH works and why key-pairs are needed
+- Copying files securely (`scp`, `rsync`)
+- Developing remotely with VSCode, `tmux`, or `screen`
 
-Part V: Shell Variants and Cross-Platform Work
-- Bash, Zsh, Fish, Powershell — what's the difference?
-- Common gotchas between Unix and Windows
-- Environment variables and quoting rules
+---
 
-Part VI: Containers and Environments
-- Why software breaks across machines
-- What Docker is and what problems it solves
-- Basic Dockerfiles and running containers
+### Part V: Shell Variants and Cross-Platform Work  
+Your script works on your machine but breaks on someone else’s.  
+We look at:
+- Key differences between Bash, Zsh, Fish, and PowerShell
+- Quoting rules, path differences, and environment variables
+- How to write portable, cross-platform scripts
+
+---
+
+### Part VI: Containers and Environments  
+Your code runs on your laptop but fails in production.  
+Here we dig into:
+- What containers like Docker do — and why they're useful
+- Writing `Dockerfile`s and running isolated containers
 - When to use Docker vs. virtual environments
 
-Part VII: Developer Workflows and Tooling
-- Project structure and good coding hygiene
-- Makefiles and shell scripts for automation
-- Pre-commit hooks, linters, and formatters
-- Intro to CI/CD (GitHub Actions or GitLab pipelines)
+---
 
-Part VIII: Configuration and Hidden State
-- Dotfiles: `.bashrc`, `.zshrc`, `.gitconfig`
-- Environment variables and startup behavior
-- Aliases and shell customization
-- `PATH`, `PYTHONPATH`, and interpreter resolution
-
-Part IX: Debugging and Diagnostics
-- Understanding logs and tracebacks
-- Checking running processes and memory usage
-- File permissions and common permission errors
-- Networking diagnostics and tunnel issues
-
-Part X: Code and Project Organization
-- Module layout and import resolution
-- `requirements.txt`, `pyproject.toml`, `setup.py`
-- Separating scripts, notebooks, and libraries
-- Naming conventions, documentation, and readmes
+### Part VII: Developer Workflows and Tooling  
+Your project is growing. How do you stay organized and automate the boring stuff?  
+We explore:
+- Project layouts and version control hygiene
+- Writing Makefiles and shell scripts to automate tasks
+- Using linters, formatters, and CI tools like GitHub Actions
 
 ---
 
-## Example: Cloning a Repo via SSH
+### Part VIII: Configuration and Hidden State  
+Why does your terminal behave differently than your teammate’s?  
+We demystify:
+- What dotfiles do (`.bashrc`, `.zshrc`, `.gitconfig`)
+- How shell startup works and where your aliases live
+- How `PATH` and `PYTHONPATH` affect what code runs
 
-```bash
-# Check if you already have SSH keys:
-ls ~/.ssh/id_*.pub
+---
 
-# Generate one if you don't:
-ssh-keygen -t ed25519 -C "your.email@domain.com"
+### Part IX: Debugging and Diagnostics  
+Something broke. You have an error message — now what?  
+You’ll learn:
+- How to interpret logs, tracebacks, and exit codes
+- Checking CPU/memory usage and inspecting processes
+- Diagnosing file permission or network issues
 
-# Add the public key (~/.ssh/id_ed25519.pub) to your GitHub account
+---
 
-# Test the SSH connection:
-ssh -T git@github.com
-
-# Clone your project:
-git clone git@github.com:org/repo.git
+### Part X: Code and Project Organization  
+Your code works. How do you structure it for others (and future-you)?  
+We cover:
+- How Python finds your modules (and what `import` really does)
+- Dependency files: `requirements.txt`, `setup.py`, `pyproject.toml`
+- Best practices for scripts, notebooks, and libraries
