@@ -38,7 +38,7 @@ You can code — write scripts, build models, analyze data — but the surroundi
 
 ### Why I Wrote This
 
-When I started my Master’s in Data Science (after a Bachelor's in Economics), I could write code but I couldn’t run it anywhere except my laptop. I didn’t know what a shell was, or why code broke across machines. This guide is my attempt to document what I learned and what I wish had been available when I started: not just how to code, but how to operate confidently within the software ecosystem that surrounds the code.
+When I started my Master’s in [Quantitative Data Science Methods](https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftliche-fakultaet/faecher/fachbereich-sozialwissenschaften/methodenzentrum/studium/msc-qds/) (after a Bachelor's in Economics), I could write code but I couldn’t run it anywhere except my laptop. I didn’t know what a shell was, or why code broke across machines. This guide is my attempt to document what I learned and what I wish had been available when I started: not just how to code, but how to operate confidently within the software ecosystem that surrounds the code.
 
 ---
 
