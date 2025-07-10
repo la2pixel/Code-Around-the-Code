@@ -1,136 +1,153 @@
 ### Understanding Files, Folders, and Memory  
-> A foundational mental model for navigating Unix-like systems
+*A foundational mental model for navigating Unix-like systems*
 
 Before you type a single command, you need to understand how files, folders, memory, and programs actually work under the hood. If you can code but feel lost when things run outside your IDE, this is the gap. This section gives you a mental model of what the shell sees and what’s happening when you interact with your machine from the terminal.
 
 ---
 
-#### 1. Storage vs Memory (Disk vs RAM)****
+#### 1. Storage vs Memory (Disk vs RAM)
 
-Your machine has:
-- **Storage** (long-term): Files and folders saved on disk (HDD, SSD)
-- **Memory (RAM)** (short-term): Temporary space where running programs live
+Your machine has two kinds of working space:
 
-Most shell commands operate on storage, i.e., the file system. When you run a program, it’s loaded *from disk into memory*. But you're not manipulating memory directly, you're telling programs to read or write files.
+- **Storage** (long-term): files and folders saved on disk (HDD, SSD)
+- **Memory (RAM)** (short-term): where running programs temporarily live
+
+> Most shell commands operate on **storage** — the file system.
+> When you run a program, it's loaded *from disk into memory*.  
+> You don’t touch memory directly — you tell programs to read/write files.
 
 ---
 
-#### **2. The File System Is a Tree **
+#### 2. The File System Is a Tree
 
-Every Unix-like system has a hierarchical file structure. Think of it like a tree:
+Every Unix-like system has a **hierarchical file structure**. Think of it like a tree:
 
-```bash
 /
 ├── home/
-│ └── yourname/
-│ ├── project/
-│ │ └── model.py
-│ ├── data/
-│ └── .bashrc
+│   └── yourname/
+│       ├── project/
+│       │   └── model.py
+│       ├── data/
+│       └── .bashrc
 ├── bin/
 ├── etc/
 └── tmp/
-```
 
-- `/` is the **root** of the system — the top-level directory
-- `/home/yourname/` is your personal workspace (also written `~`)
-- Files starting with `.` (like `.bashrc`) are hidden config files
-- Folders contain files or other folders. That’s it.
+
+- / is the **root** of the system — the top-level directory  
+- /home/yourname/ is your personal workspace (also written ~)  
+- Files starting with . (like .bashrc) are hidden config files  
+- **Folders** contain **files or other folders** — nothing more.
+
 ---
 
-#### **3. Files Are Just Bytes -> Programs Give Them Meaning**
+#### 3. Files Are Just Bytes — Programs Give Them Meaning
 
-A `.csv` file is not “spreadsheet data.” It’s just structured text.
-A `.py` file is not “code.” It’s a text file — until it’s passed to `python`.
+A .csv file is not “spreadsheet data.” It’s just **structured text**.  
+A .py file is not “code.” It’s just **plain text** — until passed to a program like python.
 
-The file system doesn’t care what a file *is for*. It only stores:
-- The filename
-- The file’s contents (as bytes)
-- Metadata (like size, permissions, timestamps)
+The file system stores only:
+- The **filename**
+- The file’s **contents** (bytes)
+- **Metadata** (size, timestamps, permissions)
 
-Meaning comes from context i.e., which program reads the file.
+> A file has no meaning until a program gives it one.  
+> A CSV is a dataset only if *something* treats it as one.
+
 ---
 
-#### **4. What Happens When You “Run a Program”**
+#### 4. What Happens When You “Run a Program”
 
 When you type:
 
-```bash
+bash
 python script.py
-```
-The shell:
-- Looks for a program called python (based on your $PATH)
-- Passes it script.py as an argument
-- Creates a process in memory that runs the Python interpreter
-- That process reads your script and does whatever it says
-- Processes are just running programs - they live in RAM, have a unique ID (PID), and disappear when done. Files are STATIC; processes are DYNAMIC.
 
-#### **5. Paths: How You Locate Files**
 
-Every time you ask the shell to open, run, or move a file, you have to tell it *where that file lives*. You do that by giving it a *path*- a description of how to reach the file, starting from some known point in the filesystem. There are two types of paths:
+Here’s what happens behind the scenes:
 
-##### Absolute Paths (always start from `/`)
+1. The shell looks for a program called python (using your $PATH)
+2. It passes script.py as input
+3. It starts a **process** in memory (RAM)
+4. That process runs the Python interpreter
+5. It reads your file and does what it says
 
-An absolute path always begins at the **top of the filesystem**, called the root (`/`). It’s like giving someone the full coordinates of the space you're going to explore.
-
-Example: Tell the shell to “Start at the root `/`, go into `home/`, then `yourname/`, then `projects/`, and finally find `train.py`.”
-
-```bash
-/home/yourname/projects/train.py
-```
-Absolute paths always point to the same file, no matter where you're standing.
+> **Processes** are running programs.  
+> They have a **PID** (process ID), live in RAM, and disappear when done.  
+> **Files** are *static*, **processes** are *dynamic*.
 
 ---
 
-##### Relative Paths (start from where you are now)
+#### 5. Paths: How You Locate Files
 
-A relative path starts from your current working directory, whatever folder you’re “in” right now.
+To tell the shell where a file is, you give it a **path**.  
+There are two types:
+
+---
+
+##### Absolute Paths (start from /)
+
+An **absolute path** always starts at the **root folder /**.
+
+bash
+/home/yourname/projects/train.py
+
+
+This means:
+> Start at the root /, then into home/, then yourname/, then projects/, and open train.py.
+
+Absolute paths always point to the same file, *no matter where you are*.
+
+---
+
+##### Relative Paths (start from your current folder)
+
+A **relative path** starts from your **current working directory** — the folder you're "in" right now.
+
 Examples:
 
-```bash
-./train.py         # the file 'train.py' in the current folder
-../data/file.csv   # go up one folder, then into 'data/', then open 'file.csv'
-scripts/run.sh     # go into 'scripts/' (from here), then run 'run.sh'
-```
+bash
+./train.py           # 'train.py' in the current folder
+../data/file.csv     # go up one folder, then into 'data/', then open 'file.csv'
+scripts/run.sh       # go into 'scripts/' subfolder and run 'run.sh'
 
-So what is your *current* location? The shell stores this internally and updates it as you `cd` around.
 
-To check where you are:
+To find your current location:
 
-```bash
+bash
 pwd
-```
 
-This prints your **working directory**, like:
 
-```
+This prints something like:
+
 /home/yourname/projects/
-```
 
-Now, say you run this:
 
-```bash
+So if you now run:
+
+bash
 python ../shared/eval.py
-```
 
-The shell interprets it as:
 
-- Go *up* one level (from `projects/` to `yourname/`)
-- Then into the folder `shared/`
-- Then run `eval.py` with `python`
+The shell interprets that as:
 
-If you were in a different folder — say `/home/yourname/tmp/` — the exact same relative path would point somewhere else or break entirely.
+- Go **up** from projects/ → yourname/
+- Then into shared/
+- Then run eval.py
+
+> If you were in a different folder — say /home/yourname/tmp/ — the same command would look for a **completely different file**, or break entirely.
+
+---
+
+##### Rule of Thumb
+
+- Use **relative paths** inside projects — for portability
+- Use **absolute paths** for system configs, symlinks, or cross-directory scripting
+
+> If your script can’t find a file, it’s *probably* because your path is wrong — **relative to where you’re standing**.
 
 ---
 
-##### Rule of thumb
-
-- Use *relative paths* when working inside a project, script, or repo — they keep things portable
-- Use *absolute paths* when referring to system-wide locations, config files, or scripting outside projects
-
-And remember: if your script can't find a file, it’s *probably* because your path is wrong **relative to where you're standing**.
-
----
 
 ####  **6. Navigating the File System**
 
@@ -138,13 +155,13 @@ Now that you know how the file system is structured and how paths work, let’s 
 
 The three commands you’ll use constantly are:
 
-- `pwd`: shows where you are
-- `cd`: moves you somewhere else (It’s the shell equivalent of opening a folder in Finder or Explorer)
-- `ls`: shows what’s in the current folder
+- pwd: shows where you are
+- cd: moves you somewhere else (It’s the shell equivalent of opening a folder in Finder or Explorer)
+- ls: shows what’s in the current folder
     - This shows:
-        - `-l`: long format (permissions, sizes, dates)
-        - `-a`: all files, including hidden ones
-        - `-h`: human-readable sizes (e.g., KB/MB)
+        - -l: long format (permissions, sizes, dates)
+        - -a: all files, including hidden ones
+        - -h: human-readable sizes (e.g., KB/MB)
 
 These form the basic feedback loop of using the terminal:
 1. Where am I?
@@ -157,39 +174,39 @@ These form the basic feedback loop of using the terminal:
 
 ---
 
-##### Move Around with `cd`
+##### Move Around with cd
 
-```bash
+bash
 cd foldername     # go into a subfolder
 cd ..             # go up one level
 cd                # go home (your user directory)
 cd ~              # same as above
 cd -              # jump back to where you were last
-```
+
 
 Examples:
 
-```bash
+bash
 cd ~/Downloads          # go to Downloads
 cd ../data              # go up one level, then into 'data'
 cd /etc/nginx           # absolute path to a system folder
 cd -                    # toggle back to previous folder
-```
+
 
 ---
 
 ##### Tab Completion
 
-Start typing a folder or file name, then hit `Tab` to auto-complete it. If there are multiple matches, press `Tab` twice to see them. This saves tons of time and prevents typos — especially in deep folder structures.
+Start typing a folder or file name, then hit Tab to auto-complete it. If there are multiple matches, press Tab twice to see them. This saves tons of time and prevents typos — especially in deep folder structures.
 
 ---
 
 ##### Rule of thumb
 
 - Think of yourself *standing inside* a folder
-- `pwd` tells you where
-- `ls` shows you what’s there
-- `cd` lets you walk to another folder
+- pwd tells you where
+- ls shows you what’s there
+- cd lets you walk to another folder
 - All relative paths are resolved from *where you’re currently standing*
 
 ---
@@ -210,56 +227,56 @@ We’ll cover the full range of commands to:
 
 ---
 
-##### `cat` - prints the whole file
+##### cat - prints the whole file
 
-```bash
+bash
 cat file.txt
-```
+
 
 - Works best for short files.
 - Dumps everything to the screen.
 
 Caution:
 - If the file is huge, your terminal will scroll past it instantly.
-- You can pipe it to `less` or `head` to control it.
+- You can pipe it to less or head to control it.
 
-```bash
+bash
 cat long.log | less
-```
+
 
 ---
 
-##### `head` — View the start of a file
+##### head — View the start of a file
 
-```bash
+bash
 head file.txt
-```
+
 
 By default, shows the first 10 lines. You can custom specify how many lines to show:
 
-```bash
+bash
 head -n 20 file.txt
-```
 
-You can also combine with `cat` and pipes:
 
-```bash
+You can also combine with cat and pipes:
+
+bash
 cat big.csv | head -n 3
-```
+
 
 ---
 
-##### `tail` — View the end of a file
+##### tail — View the end of a file
 
-```bash
+bash
 tail file.txt
-```
 
-Like `head`, but shows the last 10 lines. You can customize:
 
-```bash
+Like head, but shows the last 10 lines. You can customize:
+
+bash
 tail -n 50 file.txt
-```
+
 
 Useful when:
 - You’re checking the most recent output
@@ -267,62 +284,62 @@ Useful when:
 
 ---
 
-##### `tail -f` — Follow a file live
+##### tail -f — Follow a file live
 
-```bash
+bash
 tail -f file.log
-```
+
 
 Use this while a file is being written-- for example, a training script writing logs. It prints new lines as they appear.
 
 Custom: Starts with the last 50 lines, then continues following.
-```bash
+bash
 tail -n 50 -f file.log
-```
-To stop watching, press `Ctrl+C`.
+
+To stop watching, press Ctrl+C.
 
 ---
 
-##### `less` — View Long Files (Properly)
+##### less — View Long Files (Properly)
 
-```bash
+bash
 less file.txt
-```
 
-Why it’s better than `cat`:
-- Scrollable + Searchable (`/pattern`) + Doesn’t load the whole file into memory
+
+Why it’s better than cat:
+- Scrollable + Searchable (/pattern) + Doesn’t load the whole file into memory
 
 Basic controls:
-- `q`: quit
-- `space`: next page
-- `b`: previous page
-- `/pattern`: search forward
-- `n`: next match
-- `less` is read-only. You’re just viewing.
+- q: quit
+- space: next page
+- b: previous page
+- /pattern: search forward
+- n: next match
+- less is read-only. You’re just viewing.
 
-Tip: pipe any long output into `less`
+Tip: pipe any long output into less
 
-```bash
+bash
 ps aux | less
-```
+
 
 ---
 
-##### `more` — Like `less`, but worse
+##### more — Like less, but worse
 
-```bash
+bash
 more file.txt
-```
 
-You might see this in legacy scripts. It works, but it’s more limited (can’t scroll up easily). Stick to `less`.
+
+You might see this in legacy scripts. It works, but it’s more limited (can’t scroll up easily). Stick to less.
 
 ---
 
-#####`strings` — Read Human-Readable Text from Binary Files
+#####strings — Read Human-Readable Text from Binary Files
 
-```bash
+bash
 strings binaryfile
-```
+
 This extracts text from files that aren’t plain text — helpful for debugging saved models, weights, or corrupted logs.
 
 ---
@@ -331,12 +348,12 @@ This extracts text from files that aren’t plain text — helpful for debugging
 
 | Task | Command |
 |------|---------|
-| Quick check of config file | `cat config.yaml` |
-| Look at first few lines of CSV | `head -n 5 data.csv` |
-| Check last part of a log file | `tail train.log` |
-| Watch logs live while training | `tail -f train.log` |
-| Read through a huge file with search | `less long.log` |
-| Extract readable strings from binary | `strings model.bin` |
+| Quick check of config file | cat config.yaml |
+| Look at first few lines of CSV | head -n 5 data.csv |
+| Check last part of a log file | tail train.log |
+| Watch logs live while training | tail -f train.log |
+| Read through a huge file with search | less long.log |
+| Extract readable strings from binary | strings model.bin |
 
 ---
 
@@ -344,63 +361,63 @@ This extracts text from files that aren’t plain text — helpful for debugging
 
 By default, anything a command prints shows up in your terminal. But most of the time- especially when running experiments or jobs, you want to save that output to a file. This is called *redirection*. Let’s walk through everything you can do.
 
-##### Basic Redirection: `>`, `>>`
+##### Basic Redirection: >, >>
 
-```bash
+bash
 python train.py > output.log
-```
+
 
 This **saves stdout** (regular output) to a file. It overwrites the file if it exists.
 
 To **append** instead of overwrite:
 
-```bash
+bash
 python train.py >> output.log
-```
+
 
 This is useful for:
 - Logging multiple runs
 - Appending timestamps or errors
 
-##### Redirecting Errors: `2>`
+##### Redirecting Errors: 2>
 
 Standard error (stderr) is separate from standard output.
 
 This saves only the errors:
 
-```bash
+bash
 python train.py 2> errors.log
-```
+
 
 To save both stdout and stderr:
 
-```bash
+bash
 python train.py > out.log 2> err.log
-```
+
 
 Or combine both into a single file:
 
-```bash
+bash
 python train.py &> full.log     # Bash only
-```
+
 
 Alternative (more portable):
 
-```bash
+bash
 python train.py > full.log 2>&1
-```
 
-This means: redirect stderr (`2>`) to wherever stdout (`1>`) is currently going.
+
+This means: redirect stderr (2>) to wherever stdout (1>) is currently going.
 
 ---
 
-##### Redirect Input: `<` (rare but good to know)
+##### Redirect Input: < (rare but good to know)
 
 Sometimes you pass input to a program from a file:
 
-```bash
+bash
 some_program < input.txt
-```
+
 
 Used in:
 - Programming contests / scripts that read from stdin
@@ -412,29 +429,29 @@ Used in:
 
 You can redirect and pipe at the same time:
 
-```bash
+bash
 cat logs/*.log | grep "val_loss" > filtered.txt
-```
+
 
 This:
 1. Reads all log files
-2. Filters for lines with `val_loss`
+2. Filters for lines with val_loss
 3. Saves the result
 
 ---
 
 ##### Some edge cases
 
-- If you forget `>`, your output will scroll by — and might disappear if it’s huge
-- If you use `>` instead of `>>`, you’ll overwrite logs and lose data
-- Always `tail` your logs to check if things wrote correctly
+- If you forget >, your output will scroll by — and might disappear if it’s huge
+- If you use > instead of >>, you’ll overwrite logs and lose data
+- Always tail your logs to check if things wrote correctly
 - Some programs write **only to stderr** — even if it looks like normal output
 
 ---
 
 #####  Real Examples You’ll Use
 
-```bash
+bash
 # Save model training logs
 python train.py > logs/run1.log
 
@@ -450,7 +467,7 @@ python train.py 2> logs/errors_only.log
 # Follow logs live while redirecting from background process
 python train.py > logs/out.log 2>&1 &
 tail -f logs/out.log
-```
+
 ---
 
 
@@ -458,29 +475,29 @@ tail -f logs/out.log
 
 If you've ever wished your command-line tools could "just show me the top 10 biggest files" or "find all the failed runs from logs" — this is how you do it. The idea is simple but powerful:
 
-- Use `|` (pipe) to **pass the output of one command as input to another**
+- Use | (pipe) to **pass the output of one command as input to another**
 - Combine small, single-purpose tools into flexible, custom workflows
 
 ---
 
 ##### How to Think About Pipes
 
-Each command reads *from standard input* and writes *to standard output*.  A pipe `|` takes the output of one and **streams it directly into the next**.
+Each command reads *from standard input* and writes *to standard output*.  A pipe | takes the output of one and **streams it directly into the next**.
 So this:
 
-```bash
+bash
 cat data.txt | grep "error"
-```
+
 
 Means:
-1. `cat` prints the file
-2. `grep` filters the lines that contain `"error"`
+1. cat prints the file
+2. grep filters the lines that contain "error"
 
 Same as:
 
-```bash
+bash
 grep "error" data.txt
-```
+
 
 But piping becomes powerful when you **chain multiple tools**.
 
@@ -492,14 +509,14 @@ Let’s look at the Unix building blocks to filter, sort, summarize, or transfor
 
 ---
 
-##### `grep` — Filter lines by pattern
+##### grep — Filter lines by pattern
 
-```bash
+bash
 grep "val_loss" logs.txt
 grep -i "error" *.log          # case-insensitive
 grep -r "TODO" src/            # recursive search
 grep -rnw . -e "pattern"       # exact word, line numbers
-```
+
 
 Use it to find:
 - Matching log entries
@@ -508,67 +525,67 @@ Use it to find:
 
 ---
 
-##### `sort` — Sort lines
+##### sort — Sort lines
 
-```bash
+bash
 sort results.txt
 sort -n numbers.txt            # numeric sort
 sort -nr scores.txt            # numeric reverse (descending)
-```
 
-Use `sort` with `head` to get top-N results.
+
+Use sort with head to get top-N results.
 
 ---
 
-##### `uniq` — Deduplicate lines
+##### uniq — Deduplicate lines
 
-```bash
+bash
 sort items.txt | uniq
 uniq -c sorted.txt             # show counts
-```
 
- `uniq` only works on consectuive duplicates, so always sort first if needed.
+
+ uniq only works on consectuive duplicates, so always sort first if needed.
 
 ---
 
-###3#  `head` and `tail` — Top/bottom N
+###3#  head and tail — Top/bottom N
 
-```bash
+bash
 head -n 5 sorted.txt
 tail -n 10 error.log
-```
 
-Use these after `sort` or `grep` to focus on recent / best / worst entries.
+
+Use these after sort or grep to focus on recent / best / worst entries.
 
 ---
 
-##### `wc` — Count things
+##### wc — Count things
 
-```bash
+bash
 wc -l file.txt                 # line count
 wc -w file.txt                 # word count
 cat *.py | wc -l               # total lines in all Python files
-```
+
 
 ---
 
-##### `cut` — Extract columns
+##### cut — Extract columns
 
-```bash
+bash
 cut -d',' -f1,3 data.csv       # first and third columns
-```
 
-`-d` sets the delimiter (e.g., `,` or `:`), `-f` chooses fields.
+
+-d sets the delimiter (e.g., , or :), -f chooses fields.
 
 ---
 
-##### `awk` — Field-based processing (mini scripting)
+##### awk — Field-based processing (mini scripting)
 
-```bash
+bash
 awk '{print $2}' scores.txt              # print 2nd column
 awk -F',' '{print $1,$3}' file.csv       # with comma delimiter
 awk '$3 > 0.8' scores.txt                # filter by value
-```
+
 
 ---
 
@@ -576,46 +593,46 @@ awk '$3 > 0.8' scores.txt                # filter by value
 
 Example (1): Get top 5 largest folders
 
-```bash
+bash
 du -sh * | sort -hr | head -n 5
-```
 
-- `du -sh *`: show sizes of folders/files
-- `sort -hr`: sort human-readable sizes in reverse
-- `head -n 5`: show top 5
+
+- du -sh *: show sizes of folders/files
+- sort -hr: sort human-readable sizes in reverse
+- head -n 5: show top 5
 
  Example (2): Count failed runs from logs
 
-```bash
+bash
 grep -i "fail" logs/*.log | wc -l
-```
+
 
 Example (3): Get top 10 accuracy scores from logs
 
-```bash
+bash
 grep "accuracy" *.log | awk '{print $NF}' | sort -nr | head #if accuracy is the last field on each line
-```
+
 #### 🗂 Example: Count Python files in subfolders
 
-```bash
+bash
 find . -name "*.py" | wc -l
-```
+
 
 ---
 
 ##### Example: Download, extract, and filter a dataset (in one line)
 
-```bash
+bash
 curl -sO http://example.com/data.csv | awk -F',' '$3 > 0.9' > filtered.csv
-```
+
 
 ### Design rule: think in stages
 
 Each pipe step should do **one thing well**:
 
-```bash
+bash
 [source] | [filter] | [transform] | [sort] | [output]
-```
+
 
 If something goes wrong, test each stage individually before piping them all together.
 
@@ -623,11 +640,11 @@ If something goes wrong, test each stage individually before piping them all tog
 
 #### Debugging Tip
 
-Use `tee` to **split output** — send it to both screen and file:
+Use tee to **split output** — send it to both screen and file:
 
-```bash
+bash
 cat log.txt | tee copy.log | grep "error"
-```
+
 
 This way you can save the intermediate result *and* keep piping.
 
@@ -636,7 +653,7 @@ This way you can save the intermediate result *and* keep piping.
 ### Takeaways
 
 - Pipes let you chain simple tools into powerful workflows
-- `grep`, `sort`, `awk`, `head`, `cut`, `uniq` are your friends
+- grep, sort, awk, head, cut, uniq are your friends
 - Design command chains like data pipelines: clean inputs → filtered data → summarized output
 - Once you understand this model, you can inspect, debug, and extract insight from almost any system or dataset using nothing but shell commands
 
@@ -654,7 +671,7 @@ This way you can save the intermediate result *and* keep piping.
 
 - A script or command you’ve started that runs for a while (seconds to hours)
 - It might run in the foreground, in the background, or even on a remote machine
-- A job may launch one or more processes (e.g., `python train.py` spawns Python + possibly subprocesses like dataloaders)
+- A job may launch one or more processes (e.g., python train.py spawns Python + possibly subprocesses like dataloaders)
 
 Example jobs:
 - Training a model
@@ -676,12 +693,12 @@ A **process** is just a running instance of a program.
 
 When you run:
 
-```bash
+bash
 python train.py
-```
+
 
 The shell:
-- Finds the `python` binary
+- Finds the python binary
 - Loads it into memory
 - Passes it your script
 - Starts a new process with a PID (e.g., 12345)
@@ -690,52 +707,52 @@ When that process ends (normally or with an error), it exits and frees up memory
 
 ---
 
-##### `ps` — List Current Processes
+##### ps — List Current Processes
 
-```bash
+bash
 ps                # basic view (only your current shell session)
 ps aux            # full snapshot of all processes
 ps -ef            # alternative format (used on some systems)
-```
 
-`ps aux` output explained:
-- `USER`: who owns it
-- `PID`: process ID
-- `%CPU` / `%MEM`: usage
-- `COMMAND`: what it’s running
+
+ps aux output explained:
+- USER: who owns it
+- PID: process ID
+- %CPU / %MEM: usage
+- COMMAND: what it’s running
 
 Example:
 
-```bash
+bash
 ps aux | grep python
-```
+
 
 This shows all processes with "python" in the command.
 
 ---
 
-#####  `top` — Live Process Monitor
+#####  top — Live Process Monitor
 
-```bash
+bash
 top
-```
+
 
 Live-updating view of running processes.
 
 Controls:
-- `q`: quit
-- `P`: sort by CPU
-- `M`: sort by memory
-- `k`: kill a process (enter PID)
-- `1`: show CPU cores
+- q: quit
+- P: sort by CPU
+- M: sort by memory
+- k: kill a process (enter PID)
+- 1: show CPU cores
 
 ---
 
-#### `htop` — A Better `top` (if installed)
+#### htop — A Better top (if installed)
 
-```bash
+bash
 htop
-```
+
 
 Way nicer UI:
 - Mouse support
@@ -744,63 +761,63 @@ Way nicer UI:
 
 Install with:
 
-```bash
+bash
 sudo apt install htop     # Debian/Ubuntu
 brew install htop         # macOS
-```
+
 
 ---
 
-#### `kill` — Stop a Process by PID
+#### kill — Stop a Process by PID
 
-```bash
+bash
 kill PID
-```
+
 
 Example:
 
-```bash
+bash
 kill 12345
-```
+
 
 This sends **SIGTERM** (soft kill). If that doesn’t work:
 
-```bash
+bash
 kill -9 12345     # force kill (SIGKILL)
-```
+
 
 ---
 
-#####  `pkill` — Kill by name (No PID Needed)
+#####  pkill — Kill by name (No PID Needed)
 
-```bash
+bash
 pkill python
-```
 
-Kills all processes with `python` in the name. Use carefully!
+
+Kills all processes with python in the name. Use carefully!
 
 You can also do:
 
-```bash
+bash
 pkill -f train.py       # full command line match
-```
+
 
 ---
 
-##### `killall` — Kill all instances of a program
+##### killall — Kill all instances of a program
 
-```bash
+bash
 killall python
-```
 
-Same as `pkill`, but available only on some systems (macOS, some Linux distros).
+
+Same as pkill, but available only on some systems (macOS, some Linux distros).
 
 ---
 
-##### `time` — Measure runtime of a command
-```bash
+##### time — Measure runtime of a command
+bash
 time python train.py
-```
+
 
 Outputs:
 - Real (wall time)
@@ -811,55 +828,55 @@ Great for benchmarking scripts.
 
 ---
 
-##### `jobs` — See background/stopped jobs in your shell
+##### jobs — See background/stopped jobs in your shell
 
-```bash
+bash
 jobs
-```
+
 
 Shows things you started **in this terminal session**, like backgrounded processes.
 
 ---
 
-##### ⏮ `&`, `fg`, `bg` —control foreground and background
+##### ⏮ &, fg, bg —control foreground and background
 
-```bash
+bash
 python train.py &
-```
 
-- Appends `&` to run in the **background**
+
+- Appends & to run in the **background**
 - Immediately returns control to your shell
 
-```bash
+bash
 jobs        # list background jobs
 fg %1       # bring job 1 to foreground
 bg %1       # resume job 1 in background
-```
+
 
 ---
 
-##### ⛓ `pstree` — Visualize Parent-Child Relationships
+##### ⛓ pstree — Visualize Parent-Child Relationships
 
-```bash
+bash
 pstree -p        # with PIDs
 pstree username  # see just your processes
-```
 
-Helpful when debugging subprocesses (e.g., `torchrun`, `mpirun`, forks, etc.)
+
+Helpful when debugging subprocesses (e.g., torchrun, mpirun, forks, etc.)
 
 Install with:
 
-```bash
+bash
 sudo apt install pstree
-```
+
 
 ---
 
 ##### GPU Processes (if u use CUDA)
 
-```bash
+bash
 nvidia-smi
-```
+
 
 Shows:
 - GPU memory usage
@@ -868,15 +885,15 @@ Shows:
 
 Kill a rogue GPU process:
 
-```bash
+bash
 kill -9 PID   # from nvidia-smi output
-```
+
 
 ---
 
 ##### Zombie Processes
 
-Sometimes `ps aux` shows `[defunct]` — these are zombie processes. They’ve finished running but weren’t cleaned up properly.
+Sometimes ps aux shows [defunct] — these are zombie processes. They’ve finished running but weren’t cleaned up properly.
 
 If your system is clogged with zombies:
 - Log out and back in
@@ -885,13 +902,13 @@ If your system is clogged with zombies:
 
 ---
 
-##### `who`, `w`, `uptime` — Check Logged-In Users (Shared Servers)
+##### who, w, uptime — Check Logged-In Users (Shared Servers)
 
-```bash
+bash
 who          # who's logged in
 w            # who's doing what
 uptime       # load averages + active users
-```
+
 
 This is helpful when:
 - You're trying to be polite on a shared server
@@ -903,22 +920,22 @@ This is helpful when:
 
 | Situation | Command |
 |----------|---------|
-| My Python script hangs | `ps aux | grep python` → `kill PID` |
-| Job is running forever | `top` or `htop` → check CPU usage |
-| GPU is fully used | `nvidia-smi` |
-| I closed the terminal but job is still running | `ps aux | grep username` |
-| A training job silently failed | check `tail -f logs/run.log` |
-| You want to run a script without blocking terminal | `python train.py &` |
-| You want to pause/resume a job | `Ctrl+Z` → `bg` / `fg` |
+| My Python script hangs | ps aux | grep python → kill PID |
+| Job is running forever | top or htop → check CPU usage |
+| GPU is fully used | nvidia-smi |
+| I closed the terminal but job is still running | ps aux | grep username |
+| A training job silently failed | check tail -f logs/run.log |
+| You want to run a script without blocking terminal | python train.py & |
+| You want to pause/resume a job | Ctrl+Z → bg / fg |
 
 ---
 
 ##### Takeaways
 
 - Every program you run is a **process** — it has a PID, uses memory, and can be inspected
-- Use `ps`, `top`, or `htop` to see what’s running
-- Use `kill`, `pkill`, `jobs`, or `nvidia-smi` to stop things cleanly
-- Foreground/background control (`&`, `fg`, `bg`) lets you run multiple tasks at once
+- Use ps, top, or htop to see what’s running
+- Use kill, pkill, jobs, or nvidia-smi to stop things cleanly
+- Foreground/background control (&, fg, bg) lets you run multiple tasks at once
 - Knowing how to find and kill stuck jobs will save you hours (and GPUs)
 
 ---
