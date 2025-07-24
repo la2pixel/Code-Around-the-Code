@@ -35,13 +35,14 @@ Every Unix-like system has a *hierarchical file structure*. Think of it like a t
 
 #### 3. Files Are Just Bytes — Programs Give Them Meaning
 
-A .csv file is not really a “spreadsheet”, it’s just structured text. Similarly, a .py file is not “code.” It’s just plain text until passed to a program like python. You migght have seen people using even notepad to write code and might have gotten confused (because, I was haha) so just wanted to clarify this.
+A ``.csv`` file is not really a “spreadsheet”, it’s just structured text. a ``.py`` file isn’t code in any functional sense, it’s simply text with Python’s syntax. These files only do something when they’re opened by a program that knows how to interpret them, like Excel or Python respectively. That’s why you can write Python in something as basic as Notepad. The file system doesn’t care- it just stores:
+- file name
+- file contents (as raw bytes)
+- some metadata (size, timestamps, permissions etc)
 
-The file system stores only:
-- The **filename**
-- The file’s **contents** (bytes)
-- **Metadata** (size, timestamps, permissions)
+It’s the program that gives the file its behavior and meaning, like the interpreter, text editor, or spreadsheet software. This is also where tools like IDEs (Integrated Development Environments) and GUIs (Graphical User Interfaces) come in. They don’t change what the file is, but they make it much easier to work with — offering features like syntax highlighting, visualization, and live execution.
 
+Understanding this is key when working in the terminal: files are just bytes, and meaning only emerges when those bytes are passed to the right program.
 ---
 
 #### 4. What Happens When You “Run a Program”
