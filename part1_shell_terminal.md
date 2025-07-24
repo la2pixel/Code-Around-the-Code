@@ -42,7 +42,7 @@ A ``.csv`` file is not really a “spreadsheet”, it’s just structured text. 
 
 It’s the program that gives the file its behavior and meaning, like the interpreter, text editor, or spreadsheet software. This is also where tools like IDEs (Integrated Development Environments) and GUIs (Graphical User Interfaces) come in. They don’t change what the file is, but they make it much easier to work with — offering features like syntax highlighting, visualization, and live execution.
 
-Understanding this is key when working in the terminal: files are just bytes, and meaning only emerges when those bytes are passed to the right program.
+> Understanding this is key when working in the terminal: files are just bytes, and meaning only emerges when those bytes are passed to the right program.
 ---
 
 #### 4. What Happens When You “Run a Program”
