@@ -1,7 +1,7 @@
 ### Understanding Files, Folders, and Memory  
 *A foundational mental model for navigating Unix-like systems*
 
-Before you type a single command, you need to understand how files, folders, memory, and programs actually work under the hood. If you can code but feel lost when things run outside your IDE, this is the gap. This section gives you a mental model of what the shell sees and what’s happening when you interact with your machine from the terminal.
+Before you type a single command, you need to understand how files, folders, memory, and programs actually work under the hood. If you can code but feel lost when things run outside your IDE, this is the gap. This section gives an understanding of what the shell sees and what’s happening when you interact with your machine from the terminal.
 
 ---
 
@@ -9,50 +9,38 @@ Before you type a single command, you need to understand how files, folders, mem
 
 Your machine has two kinds of working space:
 
-- **Storage** (long-term): files and folders saved on disk (HDD, SSD)
-- **Memory (RAM)** (short-term): where running programs temporarily live
-
-> Most shell commands operate on **storage** — the file system.
-> When you run a program, it's loaded *from disk into memory*.  
-> You don’t touch memory directly — you tell programs to read/write files.
-
+- **Storage** (long-term): files and folders saved on disk (HDD, SSD), where most shell commands operate.
+- **Memory (RAM)** (short-term): when you run a program, it is loaded from disk into the memory.. you don't touch it directly, but you tell programs to read/write files.
 ---
 
 #### 2. The File System Is a Tree
 
-Every Unix-like system has a **hierarchical file structure**. Think of it like a tree:
+Every Unix-like system has a *hierarchical file structure*. Think of it like a tree:
 
-/
-├── home/
+```
+/                               # root of your system, which is the top level directory
+├── home/                       # /home/yourname is your personal workspace, which we can also represent with ~
 │   └── yourname/
-│       ├── project/
-│       │   └── model.py
+│       ├── project/            # folders, containing a few files or more folders
+│       │   └── model.py        
 │       ├── data/
-│       └── .bashrc
+│       └── .bashrc            # hidden configuration files (we will see this later)
 ├── bin/
 ├── etc/
 └── tmp/
 
-
-- / is the **root** of the system — the top-level directory  
-- /home/yourname/ is your personal workspace (also written ~)  
-- Files starting with . (like .bashrc) are hidden config files  
-- **Folders** contain **files or other folders** — nothing more.
+```
 
 ---
 
 #### 3. Files Are Just Bytes — Programs Give Them Meaning
 
-A .csv file is not “spreadsheet data.” It’s just **structured text**.  
-A .py file is not “code.” It’s just **plain text** — until passed to a program like python.
+A .csv file is not really a “spreadsheet”, it’s just structured text. Similarly, a .py file is not “code.” It’s just plain text until passed to a program like python. You migght have seen people using even notepad to write code and might have gotten confused (because, I was haha) so just wanted to clarify this.
 
 The file system stores only:
 - The **filename**
 - The file’s **contents** (bytes)
 - **Metadata** (size, timestamps, permissions)
-
-> A file has no meaning until a program gives it one.  
-> A CSV is a dataset only if *something* treats it as one.
 
 ---
 
