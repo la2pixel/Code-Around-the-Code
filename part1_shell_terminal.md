@@ -2,6 +2,7 @@
 *A foundational mental model for navigating Unix-like systems*
 
 Before you type a single command, you need to understand how files, folders, memory, and programs actually work under the hood. If you can code but feel lost when things run outside your IDE, this is the gap. This section gives an understanding of what the shell sees and what’s happening when you interact with your machine from the terminal.
+After gaining the basic intuition here, if you want the exhaustive list of possible commands, here's [command line reference A-Z](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/windows-commands) or simply ask Chatgpt for your use case:)
 
 ---
 
@@ -40,155 +41,97 @@ A ``.csv`` file is not really a “spreadsheet”, it’s just structured text. 
 - file contents (as raw bytes)
 - some metadata (size, timestamps, permissions etc)
 
-It’s the program that gives the file its behavior and meaning, like the interpreter, text editor, or spreadsheet software. This is also where tools like IDEs (Integrated Development Environments) and GUIs (Graphical User Interfaces) come in. They don’t change what the file is, but they make it much easier to work with — offering features like syntax highlighting, visualization, and live execution.
+It’s the program that gives the file its behavior and meaning, like the interpreter, text editor, or spreadsheet software. This is also where tools like IDEs (Integrated Development Environments) and GUIs (Graphical User Interfaces) come in. They don’t change what the file is, but they make it much easier to work with, offering features like syntax highlighting, visualization, and live execution.
 
 > Understanding this is key when working in the terminal: files are just bytes, and meaning only emerges when those bytes are passed to the right program.
 ---
 
 #### 4. What Happens When You “Run a Program”
 
-When you type:
-
-bash
-python script.py
+When you type something like ```python3 script.py``` on the command line, this is what happens internally:
 
 
-Here’s what happens behind the scenes:
-
-1. The shell looks for a program called python (using your $PATH)
-2. It passes script.py as input
-3. It starts a **process** in memory (RAM)
+1. The shell looks for a program called python (using your $PATH -> see right below)
+2. It passes ``script.py`` as input
+3. It starts a *process* in memory (RAM), which are running programs with a PID (process ID), live in RAM and disappear when done
 4. That process runs the Python interpreter
 5. It reads your file and does what it says
-
-> **Processes** are running programs.  
-> They have a **PID** (process ID), live in RAM, and disappear when done.  
+ 
 > **Files** are *static*, **processes** are *dynamic*.
-
 ---
 
 #### 5. Paths: How You Locate Files
 
-To tell the shell where a file is, you give it a **path**.  
-There are two types:
+To tell the shell where a file is, you give it a path. There are two types:
+##### Absolute Paths (always starts at the root folder /)
+For example,
 
----
-
-##### Absolute Paths (start from /)
-
-An **absolute path** always starts at the **root folder /**.
-
-bash
+```
 /home/yourname/projects/train.py
+```
 
+This means: start at the root /, then into home/, then yourname/, then projects/, and open ``train.py``.
 
-This means:
-> Start at the root /, then into home/, then yourname/, then projects/, and open train.py.
+##### Relative Paths (start from your current working directory)
 
-Absolute paths always point to the same file, *no matter where you are*.
+To know your current working directory (i.e., the folder you're in right now, just type)
 
----
+```bash
+pwd
+```
+This should print something like /home/yourname/projects/
 
-##### Relative Paths (start from your current folder)
+Some examples to understand path navigation:
 
-A **relative path** starts from your **current working directory** — the folder you're "in" right now.
-
-Examples:
-
-bash
+``` bash
 ./train.py           # 'train.py' in the current folder
 ../data/file.csv     # go up one folder, then into 'data/', then open 'file.csv'
 scripts/run.sh       # go into 'scripts/' subfolder and run 'run.sh'
+```
 
+If you were in a different folder — say /home/yourname/tmp/ — the same command would look for a completely different file or break entirely. So it's very important to check your working directory before you start commands. Also, if your script can't find a file, it's probably because your path is wrong, **relative to where you're standing.**
 
-To find your current location:
+##### Takeaways
 
-bash
-pwd
-
-
-This prints something like:
-
-/home/yourname/projects/
-
-
-So if you now run:
-
-bash
-python ../shared/eval.py
-
-
-The shell interprets that as:
-
-- Go **up** from projects/ → yourname/
-- Then into shared/
-- Then run eval.py
-
-> If you were in a different folder — say /home/yourname/tmp/ — the same command would look for a **completely different file**, or break entirely.
-
+> Absolute paths always point to the same file, no matter where you are. Use them for system configs, symlinks, or cross-directory scripting.
+> Use relative paths inside projects for portability.
 ---
-
-##### Rule of Thumb
-
-- Use **relative paths** inside projects — for portability
-- Use **absolute paths** for system configs, symlinks, or cross-directory scripting
-
-> If your script can’t find a file, it’s *probably* because your path is wrong — **relative to where you’re standing**.
-
----
-
 
 ####  **6. Navigating the File System**
 
-Now that you know how the file system is structured and how paths work, let’s talk about how to move around in it using the shell.
-
+Now that you know how the file system is structured and how paths work, let’s talk about how to move around in it using the shell. 
 The three commands you’ll use constantly are:
 
-- pwd: shows where you are
-- cd: moves you somewhere else (It’s the shell equivalent of opening a folder in Finder or Explorer)
-- ls: shows what’s in the current folder
+- ```pwd```: shows where you are
+- ```cd```: moves you somewhere else (It’s the shell equivalent of opening a folder in Finder or Explorer)
+- ```ls```: shows what’s in the current folder
     - This shows:
-        - -l: long format (permissions, sizes, dates)
-        - -a: all files, including hidden ones
-        - -h: human-readable sizes (e.g., KB/MB)
-
-These form the basic feedback loop of using the terminal:
-1. Where am I?
-2. What’s here?
-3. Go somewhere else
-4. Repeat
----
-
-
-
----
+        - ```-l```: long format (permissions, sizes, dates)
+        - ```-a```: all files, including hidden ones
+        - ```-h```: human-readable sizes (e.g., KB/MB)
 
 ##### Move Around with cd
 
-bash
+``` bash
 cd foldername     # go into a subfolder
-cd ..             # go up one level
-cd                # go home (your user directory)
+cd ..             # 2 dots -> go up one level
+cd                # go back home 
 cd ~              # same as above
 cd -              # jump back to where you were last
+```
 
-
-Examples:
-
-bash
+Here are some examples commands:
+```
 cd ~/Downloads          # go to Downloads
 cd ../data              # go up one level, then into 'data'
 cd /etc/nginx           # absolute path to a system folder
 cd -                    # toggle back to previous folder
+```
 
-
----
 
 ##### Tab Completion
 
-Start typing a folder or file name, then hit Tab to auto-complete it. If there are multiple matches, press Tab twice to see them. This saves tons of time and prevents typos — especially in deep folder structures.
-
----
+Start typing a folder or file name, then hit Tab to auto-complete it. If there are multiple matches, press Tab twice to see them. This saves tons of time and prevents typos, especially in deep folder structures.
 
 ##### Rule of thumb
 
